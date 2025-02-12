@@ -48,6 +48,18 @@ int main()
     unsigned long long l3 = 1844'6744'0737'0955'0592uLL;
     unsigned long long l4 = 184467'440737'095505'92LLU;
 
+    // Floating-point literals
+    float f = 3.4028234e38f;
+    double d0 = 58.;
+    double d1 = 4e2;
+    double d2 = 123.456e-67;
+    double d3 = .1;
+    double d4 = .1E4f;
+    double d5 = 2.4028234e38;
+    double d6 = 0x1.4p3; // hex fraction 1.4 (decimal 1.25) scaled by 23, that is 10.0
+    long double d7 = 1.4028234e38l;
+    std::bfloat16_t bfc = 0.1BF16; // C++23
+
     // COMPARISON
     bool bool1 = d == dd;
     bool bool2 = d != dd;
