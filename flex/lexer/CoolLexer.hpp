@@ -13,6 +13,7 @@ public:
         : yyFlexLexer{arg_yyin, arg_yyout}, out{arg_yyout}, lineno{1}
     {
     }
+
     size_t line() noexcept
     {
         return lineno;
