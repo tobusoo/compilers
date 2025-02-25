@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./driver ./prog.pas
+./driver ./prog.cl

@@ -4,98 +4,83 @@
 #include <cstdio>
 #include <string>
 
-#include "Parser.h"
-#include "CoolLexer.h"
+#include "Parser.hpp"
+#include "CoolLexer.hpp"
 
 #undef YY_DECL
-#define YY_DECL int CoolLexer::yylex()
+#define	YY_DECL tok::Token CoolLexer::lex()
 
+#undef YY_NULL
+#define YY_NULL tok::Token(tok::TokenKind(0))
 %}
 
-white_space       [ \t]*
-digit             [0-9]
-alpha             [A-Za-z_]
-alpha_num         ({alpha}|{digit})
-hex_digit         [0-9a-fA-F]
-identifier        {alpha}{alpha_num}*
-unsigned_integer  {digit}+
-hex_integer       ${hex_digit}{hex_digit}*
-exponent          e[+-]?{digit}+
-i                 {unsigned_integer}
-real              ({i}\.{i}?|{i}?\.{i}){exponent}?
-string            \'([^'\n]|\'\')*\'
-bad_string        \'([^'\n]|\'\')*
-
-%x COMMENT
-
 %option warn nodefault batch noyywrap c++
-%option yylineno
 %option yyclass="CoolLexer"
+
+white_space         [ \t\f\b\r]*
+digit               [0-9]
+alpha               [A-Za-z_]
+alpha_num           ({alpha}|{digit})
 
 %%
 
-"{"                 BEGIN(COMMENT);
-<COMMENT>[^}\n]+    { /* skip*/ }
-<COMMENT>\n         { lineno++; }
-<COMMENT><<EOF>>    Error("EOF in comment");
-<COMMENT>"}"        BEGIN(INITIAL);
+(?i:class)          return tok::Token(tok::kw_class, YYText());
+(?i:else)           return tok::Token(tok::kw_else, YYText());
+(?:fi)              return tok::Token(tok::kw_fi, YYText());
+(?:if)              return tok::Token(tok::kw_if, YYText());
+(?:in)              return tok::Token(tok::kw_in, YYText());
+(?:inherits)        return tok::Token(tok::kw_inherits, YYText());
+(?:isvoid)          return tok::Token(tok::kw_isvoid, YYText());
+(?:let)             return tok::Token(tok::kw_let, YYText());
+(?:loop)            return tok::Token(tok::kw_loop, YYText());
+(?:pool)            return tok::Token(tok::kw_pool, YYText());
+(?:while)           return tok::Token(tok::kw_while, YYText());
+(?:case)            return tok::Token(tok::kw_case, YYText());
+(?:esac)            return tok::Token(tok::kw_esac, YYText());
+(?:new)             return tok::Token(tok::kw_new, YYText());
+(?:of)              return tok::Token(tok::kw_of, YYText());
+(?:not)             return tok::Token(tok::kw_not, YYText());
 
-and                  return TOKEN_AND;
-array                return TOKEN_ARRAY;
-begin                return TOKEN_BEGIN;
-case                 return TOKEN_CASE;
-const                return TOKEN_CONST;
-div                  return TOKEN_DIV;
-do                   return TOKEN_DO;
-downto               return TOKEN_DOWNTO;
-else                 return TOKEN_ELSE;
-end                  return TOKEN_END;
-file                 return TOKEN_FILE;
-for                  return TOKEN_FOR;
-function             return TOKEN_FUNCTION;
-goto                 return TOKEN_GOTO;
-if                   return TOKEN_IF;
-in                   return TOKEN_IN;
-label                return TOKEN_LABEL;
-mod                  return TOKEN_MOD;
-nil                  return TOKEN_NIL;
-not                  return TOKEN_NOT;
-of                   return TOKEN_OF;
-packed               return TOKEN_PACKED;
-procedure            return TOKEN_PROCEDURE;
-program              return TOKEN_PROGRAM;
-record               return TOKEN_RECORD;
-repeat               return TOKEN_REPEAT;
-set                  return TOKEN_SET;
-then                 return TOKEN_THEN;
-to                   return TOKEN_TO;
-type                 return TOKEN_TYPE;
-until                return TOKEN_UNTIL;
-var                  return TOKEN_VAR;
-while                return TOKEN_WHILE;
-with                 return TOKEN_WITH;
+f(?:alse)           return tok::Token(tok::const_bool, YYText());
+t(?:rue)            return tok::Token(tok::const_bool, YYText());
+{digit}+            return tok::Token(tok::const_integer, YYText());
 
-"<="|"=<"            return TOKEN_LEQ;
-"=>"|">="            return TOKEN_GEQ;
-"<>"                 return TOKEN_NEQ;
-"="                  return TOKEN_EQ;
-".."                 return TOKEN_DOUBLEDOT;
+"<-"                return tok::Token(tok::op_assignment, YYText());
+"=>"                return tok::Token(tok::op_arrow, YYText());
 
-{unsigned_integer}   return TOKEN_UNSIGNED_INTEGER;
-{real}               return TOKEN_REAL;
-{hex_integer}        return TOKEN_HEX_INTEGER;
+"+"                 return tok::Token(tok::op_plus, YYText());
+"-"                 return tok::Token(tok::op_minus, YYText());
+"*"                 return tok::Token(tok::op_mul, YYText());
+"/"                 return tok::Token(tok::op_div, YYText());
 
-{string}             return TOKEN_STRING;
-{bad_string}         Error("unterminated string");
+"~"                 return tok::Token(tok::op_tilde, YYText());
 
-{identifier}         return TOKEN_IDENTIFIER;
+"<"                 return tok::Token(tok::op_lss, YYText());
+"<="                return tok::Token(tok::op_leq, YYText());
+"="                 return tok::Token(tok::op_eq, YYText());
 
 
-[*/+\-,^.;:()\[\]]   return yytext[0];
+"["                 return tok::Token(tok::l_square, YYText());
+"]"                 return tok::Token(tok::r_square, YYText());
+"("                 return tok::Token(tok::l_paren, YYText());
+")"                 return tok::Token(tok::r_paren, YYText());
+"{"                 return tok::Token(tok::l_brace, YYText());
+"}"                 return tok::Token(tok::r_brace, YYText());
 
-{white_space}        { /* skip spaces */ }
-\n                   lineno++;
-.                    Error("unrecognized character");
+"."                 return tok::Token(tok::period, YYText());
+":"                 return tok::Token(tok::colon, YYText());
+";"                 return tok::Token(tok::semi, YYText());
+","                 return tok::Token(tok::comma, YYText());
+"@"                 return tok::Token(tok::at, YYText());
+
+[a-z]{alpha_num}*   return tok::Token(tok::identifier_type, YYText());
+[A-Z]{alpha_num}*   return tok::Token(tok::identifier_object, YYText());
+_{alpha_num}*       return tok::Token(tok::identifier, YYText());
+
+
+\n                  lineno++;
+{white_space}       { }
+.                   Error("unrecognized character");
 
 %%
 
