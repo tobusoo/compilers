@@ -46,12 +46,10 @@ enum TokenKind {
     op_eq,  // '='
 
     // Punctuation
-    l_square, // '['
-    r_square, // ']'
-    l_paren,  // '('
-    r_paren,  // ')'
-    l_brace,  // '{'
-    r_brace,  // '}'
+    l_paren, // '('
+    r_paren, // ')'
+    l_brace, // '{'
+    r_brace, // '}'
 
     period, // '.'
     colon,  // ':'
@@ -59,7 +57,7 @@ enum TokenKind {
     comma,  // ','
     at,     // '@'
 
-    // Others
+    // Identifiers
     identifier_type,
     identifier_object,
     identifier,
@@ -67,10 +65,17 @@ enum TokenKind {
     NUM_TOKENS
 }; // enum TokenKind
 
-struct Token {
+class Token {
+public:
     Token(TokenKind kind, const char* value = nullptr) : kind{kind}, value_str{value} {};
 
+    TokenKind GetKind() const noexcept;
+    const char* GetKindStr() const noexcept;
+    const char* GetValue() const noexcept;
+
+private:
     TokenKind kind;
     const char* value_str;
 };
+
 }; // namespace tok
