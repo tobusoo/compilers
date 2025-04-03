@@ -54,7 +54,6 @@ static std::unordered_map<int, const char*> tokensMap = {
 
         {identifier_type, "identifier_type"},
         {identifier_object, "identifier_object"},
-        {identifier, "identifier"},
 };
 
 TokenKind Token::GetKind() const noexcept

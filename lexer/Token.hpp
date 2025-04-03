@@ -60,7 +60,6 @@ enum TokenKind {
     // Identifiers
     identifier_type,
     identifier_object,
-    identifier,
 
     NUM_TOKENS
 }; // enum TokenKind

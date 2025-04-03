@@ -1,0 +1,108 @@
+#!/bin/sh
+
+PROG="./calc"
+TESTFILE="./input"
+
+PASSED_COUNTER=0
+FAILED_COUNTER=0
+
+GREEN="\e[1;32m"
+RED="\e[1;31m"
+DEFAULT="\e[0m"
+
+
+print_stat()
+{
+    if [ ${FAILED_COUNTER} -eq "0" ]; then
+        echo "${GREEN}ALL TEST PASSED${DEFAULT}"
+    else
+        echo "${RED}$FAILED_COUNTER TEST FAILED${DEFAULT}"
+    fi
+}
+
+run()
+{
+    ${PROG} < ${TESTFILE} >res 2>res-err
+    if [ "$?" -eq "$1" ]; then
+        TEST=`cat $TESTFILE`
+        echo $2 > res-exp
+        if diff -B res res-exp >/dev/null 2>&1; then
+            PASSED_COUNTER=$((PASSED_COUNTER+1))
+            echo "${TEST} -- ${GREEN}PASSED${DEFAULT}"
+        else
+            FAILED_COUNTER=$((FAILED_COUNTER+1))
+            echo "${TEST} -- ${RED}FAILED${DEFAULT}"
+        fi
+    else
+        echo "${TEST} -- ${RED}FAILED (EXIT STATUS)${DEFAULT}"
+        FAILED_COUNTER=$((FAILED_COUNTER+1))
+    fi
+    rm -f res res-err res-exp $TESTFILE
+}
+
+cat >input <<EOF
+4 + 4.5 - (34/(8*3+-3)) + 0.e
+EOF
+run 0 6.880952381
+
+cat >input <<EOF
+-56 + 2
+EOF
+run 0 -54
+
+cat >input <<EOF
+-2 ^ 2
+EOF
+run 0 -4
+
+cat >input <<EOF
+-2
+EOF
+run 0 -2
+
+cat >input <<EOF
+3 ^ 2
+EOF
+run 0 9
+
+cat >input <<EOF
+(2.2 * 3.3) + 1.1
+EOF
+run 0 8.36
+
+cat >input <<EOF
+1e5+3
+EOF
+run 0 100003
+
+cat >input <<EOF
+(1 + 2) * 3
+EOF
+run 0 9
+
+cat >input <<EOF
+(1 + 2) * -3
+EOF
+run 0 -9
+
+cat >input <<EOF
+(1 + 2) ^ (3/4)
+EOF
+run 0 2.279507057
+
+cat >input <<EOF
+(((1 * 2 * (3 * 4) * 5) * 6 * ((7 * 8)) * ((((((9))))))))
+EOF
+run 0 362880
+
+cat >input <<EOF
+(1 + a) * 3
+EOF
+run 1
+
+cat >input <<EOF
+(1 + 2) * 3 *-* -32
+EOF
+run 1
+
+print_stat

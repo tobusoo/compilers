@@ -97,7 +97,6 @@ t(?:rue)            return tok::Token(tok::const_bool, "true");
 
 [a-z]{alpha_num}*   return tok::Token(tok::identifier_object, YYText());
 [A-Z]{alpha_num}*   return tok::Token(tok::identifier_type, YYText());
-_{alpha_num}*       return tok::Token(tok::identifier, YYText());
 
 
 {float}             Error("floating point number are not supporting");
