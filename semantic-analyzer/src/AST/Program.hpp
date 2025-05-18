@@ -28,6 +28,11 @@ public:
         v->Visit(this);
     }
 
+    void SetClasses(Classes* classes_)
+    {
+        classes = classes_;
+    }
+
     Classes* GetClasses()
     {
         return classes;

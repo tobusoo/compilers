@@ -4,14 +4,22 @@
 
 int main(int argc, char** argv)
 {
+    Program* program = new Program();
     for (int i = 1; i < argc; i++) {
         bool ok = parser::Parse(argv[i]);
         if (!ok) {
             return EXIT_FAILURE;
         }
-    }
 
-    auto program = parser::GetProgram();
+        if (i == 1) {
+            program = parser::GetProgram();
+        } else {
+            auto cur_classes = program->GetClasses();
+            for (auto&& class_ : *parser::GetProgram()->GetClasses()) {
+                cur_classes->PushBack(std::move(class_));
+            }
+        }
+    }
 
     sema::InheritanceGraphBuilder IGB;
     IGB.Visit(program);

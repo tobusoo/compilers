@@ -13,4 +13,3 @@ cmake --build build
 
 ## TODO
 - [ ] Refactoring the project and configuring cmake
-- [ ] Semantic analysis of all transferred files, not just the last one

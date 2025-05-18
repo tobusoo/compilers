@@ -165,11 +165,11 @@ void SemanticChecker::Visit(Class* node)
 
         auto method = (*it).second;
         if (!method->GetFormals()->empty()) {
-            error(curr_filename, Line(features), "method \"main\" can't contain formal parameters");
+            error(curr_filename, Line(node), "method \"main\" can't contain formal parameters");
         }
     } else if (class_name != "Main" && current_methods->contains("main")) {
         error(curr_filename,
-              Line(features),
+              Line(node),
               "class " + sema::quoted(class_name) + " can't contain \"main\" method");
     }
 }
@@ -347,7 +347,7 @@ void SemanticChecker::Visit(Method* node)
     }
     if (body_type != "UNKNOWN" && !CanInherit(body_type, return_type)) {
         error(curr_filename,
-              Line(body),
+              Line(node),
               "return type mismatch: expected " + sema::quoted(return_type) + ", got "
                       + sema::quoted(body_type));
     }
