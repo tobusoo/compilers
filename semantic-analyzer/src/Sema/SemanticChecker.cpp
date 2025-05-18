@@ -121,32 +121,6 @@ std::string SemanticChecker::JoinTypes(const std::string& typeA, const std::stri
 
 void SemanticChecker::Visit(Program* node)
 {
-    // for (auto&& class_name : classes) {
-    //     auto entry = class_map[class_name];
-    //     auto parent = entry->GetParent();
-    //     if (parent != "") {
-    //         methods_table[class_name] = methods_table[parent];
-    //         attrs_table[class_name] = attrs_table[parent];
-    //     }
-
-    //     auto features = entry->GetFeatures();
-    //     if (features->empty())
-    //         continue;
-
-    //     for (auto&& feature : *features) {
-    //         auto attr = dynamic_cast<Attr*>(feature);
-    //         if (attr == nullptr) {
-    //             auto method = dynamic_cast<Method*>(feature);
-    //             assert(method);
-    //             auto method_name = method->GetName();
-    //             methods_table[class_name][method_name] = method;
-    //         } else {
-    //             auto attr_name = attr->GetName();
-    //             attrs_table[class_name][attr_name] = attr;
-    //         }
-    //     }
-    // }
-
     for (auto&& entry : classes) {
         class_methods.clear();
         visited_class.insert(entry);
@@ -432,16 +406,6 @@ void SemanticChecker::Visit(Dispatch* node)
     Visit(expr);
     auto expr_type = expr->GetType();
 
-    // auto object = dynamic_cast<Object*>(expr);
-    // if (object == nullptr) {
-    //     error(curr_filename,
-    //           Line(node),
-    //           "can't use " + sema::quoted(expr_type) + " as an object with method "
-    //                   + sema::quoted(name));
-
-    //     return;
-    // }
-    // undefined variable
     if (expr_type == "UNKNOWN") {
         return;
     }
@@ -766,11 +730,6 @@ void SemanticChecker::Visit(Let* node)
         return;
     }
 
-    // if (current_attrs->contains(name)) {
-    //     error(curr_filename, Line(node), "redefinition of " + sema::quoted(name) + " variable");
-    //     return;
-    // }
-
     if (init && !dynamic_cast<NoExpr*>(init)) {
         Visit(init);
         auto init_type = init->GetType();
@@ -795,13 +754,6 @@ void SemanticChecker::Visit(Let* node)
         return;
     }
 
-    // if (dynamic_cast<Let*>(body) == nullptr && !CanInherit(body_type, type_decl)) {
-    //     error(curr_filename,
-    //           Line(node),
-    //           "type mismatch in let body: expected " + sema::quoted(type_decl) + ", got "
-    //                   + sema::quoted(body_type));
-    //     return;
-    // }
     node->SetType(body_type);
 }
 
