@@ -368,7 +368,7 @@ void SemanticChecker::Visit(Method* node)
     auto body_type = body->GetType();
 
     // method returns SELF_TYPE -> body_type = Class type
-    if (body_type == "SELF_TYPE") {
+    if (body_type == "SELF_TYPE" && return_type != "SELF_TYPE") {
         body_type = class_map[curr_class]->GetName();
     }
     if (body_type != "UNKNOWN" && !CanInherit(body_type, return_type)) {
