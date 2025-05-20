@@ -127,6 +127,10 @@ void SemanticChecker::Visit(Program* node)
         Visit(class_map[entry]);
         class_methods.clear();
     }
+
+    if (visited_class.find("Main") == visited_class.end()) {
+        error("Program must contain Main class!");
+    }
 }
 
 void SemanticChecker::Visit(Class* node)
